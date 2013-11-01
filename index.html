@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>Box To ERP</title>
 
 		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
 		<meta name="author" content="Hakim El Hattab">
@@ -37,11 +37,137 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-          <h1>From Box To ERP</h1>
+          <h1>MemberOf</h1>
+          <h3>From Box To ERP</h3>
 				</section>
+        <section>
+          <h2>Blank</h2>
+				</section>
+
+        <section>
+          <h2>Provisioning</h2>
+					<ul>
+            <li>granular provisioning at TU, highly automated</li>
+						<li>Box offers restful json api</li>
+						<li>Oauth 2 with authorization_code grant type only</li>
+            <li>to get token via Shibb using Postman: <br />http://www.youtube.com/watch?v=y-6iED1UDUg</li>
+						<li>store refresh token after each use</li>
+					</ul>
+        </section>
+
 				<section>
-          <h2>Shibboleth</h2>
+				  <section>
+            <h2>Federated Identity</h2>
+            <p>Authentication: the usual Shibb metadata exchange</p>
+            <p>Authorization: assign privileges to groups, please</p>
+				  </section>
+				  <section>
+            <h2>Shibboleth Attribute Release</h2>
+				  </section>
 				</section>
+
+        <section>
+          <h2>SingleSignOut</h2>
+				</section>
+
+        <section>
+          <h2>Directory(ies)</h2>
+          <p>Run OpenLDAP and Ad in parrallel at TU.</p>
+          <p>Keep everyone in a flat ou=people.</p>
+          <p>Want both member and memberOf (overlay in OpenLdap, 'free' in AD).</p>
+				</section>
+
+        <section>
+          <section>
+            <h2>EntryLib.rb</h2>
+            <table style="margin-left: auto; margin-right:auto;">
+              <tr>
+                <td></td>
+                <td style="text-align: center;">OpenLdap</td>
+                <td style="text-align: center;">AD</td>
+              </tr>
+              <tr>
+                <td style="vertical-align:middle;">Person</td>
+                <td style="background-color:grey; width:300px; height:200px;"></td>
+                <td style="background-color:grey; width:300px; height:200px;"></td>
+              </tr>
+              <tr>
+                <td style="vertical-align:middle;">Group</td>
+                <td style="background-color:grey; width:300px; height:200px;"></td>
+                <td style="background-color:grey; width:300px; height:200px;"></td>
+              </tr>
+            </table>
+				  </section>
+
+          <section>
+            <h2>EntryLib.rb</h2>
+            <pre class="stretch"><code>
+class Entry
+  def self.set_particulars(particulars)
+  def self.auth(dn,pw)
+  def self.connect(dn,pw)
+  def self.dir
+  def dir
+  def self.find(dn)
+  def self.search(base,filter)
+  def operation(attr,value=nil)
+  def set(struct)
+module LdapConfig
+module AdConfig
+class LdapEntry < Entry
+  include LdapConfig
+  def self.encode(pw)
+class AdEntry < Entry
+  include AdConfig
+  def self.encode(pw)
+  def operation(attr,value=nil)
+            </code></pre>
+            <aside class="notes">
+              Think about adding detail for config, in particular, usage by base class methods.
+              Think about adding attrfrump/moop slide.
+            </aside>
+				  </section>
+          <section>
+            <h2>EntryLib.rb</h2>
+            <pre><code>
+module Person
+  module ClassMethods
+    def find(id)
+    def search(filter,attrs=nil)
+    def uid_to_dn(uid)
+    def create(uid,did,first,last)
+class PersonLdapEntry < LdapEntry
+  include Person
+  def self.generate_uid_number
+  def add_mail_attributes
+  def generate_primary_mail
+  def self.lookup(id)
+class PersonAdEntry < AdEntry
+  include Person
+            </code></pre>
+				  </section>
+          <section>
+            <h2>EntryLib.rb</h2>
+            <pre><code>
+module Group
+  module ClassMethods
+    def path_to_dn(path)
+    def dn_to_path(dn)
+class GroupLdapEntry < LdapEntry
+  include Group
+  def self.groups
+class GroupAdEntry < AdEntry
+  include Group
+  def initialize(keyvals={})
+  def flatten_ranged_attribute(attribute)
+  def self.membership(dn)
+            </code></pre>
+            <p>Flexible w/o duplicate code :)</p>
+				  </section>
+				</section>
+
+
+
 				<section>
 					<h1>Reveal.js</h1>
 					<h3>HTML Presentations Made Easy</h3>
