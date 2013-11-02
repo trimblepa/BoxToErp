@@ -166,6 +166,68 @@ class GroupAdEntry < AdEntry
 				  </section>
 				</section>
 
+        <section>
+          <section>
+            <h2>Grouper Taxonomy</h2>
+            <ul>
+              <li>student</li>
+              <ul>
+                <li>course</li>
+                <li>department</li>
+              </ul>
+              <li>employee</li>
+              <ul>
+                <li>organization</li>
+                <li>role</li>
+              </ul>
+              <li>non-affiliated</li>
+              <li>application</li>
+              <li>automated*</li>
+              <li>composite*</li>
+            </ul>
+            <p style="margin-top:60px;"><small>*not synchronized to directory</small></p>
+				  </section>
+				  <section>
+            <h2>Automated Subtree</h2>
+            <ul>
+              <li>contains all sql defined groups</li>
+              <li>mirror of synchronized structure</li>
+              <li>automated group is member in front group</li>
+              <li>individial exceptions added to front group</li>
+            </ul>
+            <p>Classic use case: CIO not in IT!</p>
+				  </section>
+				  <section>
+            <h2>Composite Subtree</h2>
+            <ul>
+              <li>intersection</li>
+              <li>exclude</li>
+            </ul>
+            <p>For example, composite:law-faculty is the intersction of employee:organization:law and employee:faculty;
+               'front' group employee:law-faculty has composite:law-faculty and any added exceptions as members.</p>
+				  </section>
+				  <section>
+            <h2>Theory of Groups</h2>
+            <ul>
+              <li>do NOT redefine per use case</li>
+              <li>aggregate from sensibly defined</li>
+				  </section>
+				</section>
+
+				<section>
+          <h2>Identity Vault</h2>
+          <ul>
+            <li>tuid, name, value</li>
+            <li>noise equals power</li>
+            <li>indexes, indexes, indexes</li>
+            <li></li>
+            <li></li>
+          </ul>
+					<aside class="notes">
+            Didn't we have some note for this?
+          </aside>
+				</section>
+
 
 
 				<section>
