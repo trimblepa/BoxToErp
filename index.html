@@ -168,6 +168,52 @@ class GroupAdEntry < AdEntry
 
         <section>
           <section>
+            <h2>grouperlib.rb</h2>
+            <pre class="stretch"><code>
+class Grouper
+  def initialize(host,username,password)
+  def post(payload,dechaff,urh='/grouper-ws/servicesRest/v2.0.1/groups',*opts)
+  def get(command,dechaff)
+  def put(path,id)
+  def delete(path,id)
+class GrouperGroup
+  def self.grouper
+  def grouper
+  def initialize(path,uuid=nil,attributes={},types=[])
+  def members(opt={})
+  def add_members(ids)
+  def delete_members(ids)
+  def self.find id
+  def self.child_stems(stem)
+  def self.child_paths(stem)
+  def self.gsh_creator(path,where)
+
+            </code></pre>
+            <aside class="notes">
+            There's room for the initializer type stuff but does it add anything?
+            Brief explanation of dechaff? Probably not?
+            </aside>
+          </section>
+          <section>
+            <h2>API Round-trip</h2>
+            <ul>
+            <li>Build RESTful URL (groups/#{path}/members/#{id})</li>
+            <li>Build the payload if appropriate (POSTs like FindGroups/Stems, etc)
+            <li>Execute the query (http PUT)</li>
+            <li>Parse the JSON and extract interesting fields</li>
+            </ul>
+            <aside class="notes">
+              Better to do a specific example rather than a general explanation?
+            </aside>
+          </section>
+          <section>
+            <h2>Using the grouper API docs</h2>
+            <p>Need to figure out the key tips here.</p>
+          </section>
+        </section>
+
+        <section>
+          <section>
             <h2>Grouper Taxonomy</h2>
             <ul>
               <li>student</li>
@@ -220,6 +266,46 @@ where name = 'employment_status_code'
               <li>aggregate from sensibly defined</li>
           </section>
         </section>
+
+        <section>
+          <section>
+            <h2>Subject View</h2>
+            <pre class="stretch"><code>
+create view subject_viewnv as select
+ b.did as id,
+ (select a.value from namevalue as a where a.name='first' and a.did=b.did)
+  as first,
+ (select a.value from namevalue as a where a.name='last' and a.did=b.did)
+  as last,
+ (select a.value from namevalue as a where a.name='uid' and a.did=b.did)
+  as uid,
+ (select a.value from namevalue as a where a.name='displayname' and a.did=b.did)
+  as displayname,
+ (select lower(a.value) from namevalue as a where a.name='displayname' and a.did=b.did)
+  as lowername
+from
+ (select distinct did from namevalue) as b ;
+            </code></pre>
+            <aside class="notes">
+              Better formatting. Maybe change line breaks? Couldn't come up with anything I liked.
+
+              Turn namevalue pairs in to something like a more typical table.
+              Key element is from clause. Everything builds from there.
+
+              can't remember what config'd how means?
+            </aside>
+          </section>
+          <section>
+            <h2>Perhaps you can help</h2>
+            <p>We're not happy with subject search speed (2-3s)
+            <ul>
+              <li>We've tried different formulations</li>
+              <li>We've tried indexing</li>
+              <li>We've tried materializing the view</li>
+              <li>??</li>
+            </ul>
+          </section>
+          </section>
 
         <section>
           <h2>Identity Vault</h2>
