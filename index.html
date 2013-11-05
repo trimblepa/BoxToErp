@@ -191,6 +191,12 @@ class GroupAdEntry < AdEntry
             <h2>Automated Subtree</h2>
             <ul>
               <li>contains all sql defined groups</li>
+            <pre><code>
+select tuid as SUBJECT_ID
+from namevalue
+where name = 'employment_status_code'
+  and value = 'R'
+            </code></pre>
               <li>mirror of synchronized structure</li>
               <li>automated group is member in front group</li>
               <li>individial exceptions added to front group</li>
@@ -203,8 +209,9 @@ class GroupAdEntry < AdEntry
               <li>intersection</li>
               <li>exclude</li>
             </ul>
-            <p>For example, composite:law-faculty is the intersction of employee:organization:law and employee:faculty;
-               'front' group employee:law-faculty has composite:law-faculty and any added exceptions as members.</p>
+            <p style="margin-top:50px;">For example:</p>
+            <p style="font-size:0.8em;">composite:law-faculty = employee:organization:law &cap; employee:faculty</p>
+            <p style="font-size:0.8em;">employee:law-faculty = composite:law-faculty &cup; additional members</p>
           </section>
           <section>
             <h2>Theory of Groups</h2>
@@ -217,11 +224,11 @@ class GroupAdEntry < AdEntry
         <section>
           <h2>Identity Vault</h2>
           <ul>
-            <li>tuid, name, value</li>
+            <li>[tuid, name, value]</li>
             <li>noise equals power</li>
             <li>indexes, indexes, indexes</li>
-            <li></li>
-            <li></li>
+            <li>emulating document db</li>
+            <li>looking at single/multi schema</li>
           </ul>
           <aside class="notes">
             Didn't we have some note for this?
