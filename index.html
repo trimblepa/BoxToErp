@@ -63,6 +63,55 @@
           </section>
           <section>
             <h2>Shibboleth Attribute Release</h2>
+            <pre>
+//attribute-filter.xml
+&lt;afp:AttributeFilterPolicy id="box">
+  &lt;afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString"
+    value="box.net" />
+  &lt;afp:AttributeRule attributeID="ldgroup">
+    &lt;afp:PermitValueRule xsi:type="basic:ANY" />
+  &lt;afp:AttributeRule>
+&lt;afp:AttributeFilterPolicy>
+
+//attribute-resolver.xml
+&lt;resolver:AttributeDefinition xsi:type="ad:Script" id="ldgroup">
+  &lt;resolver:Dependency ref="myLDAP" />
+  &lt;resolver:AttributeEncoder xsi:type="enc:SAML1String"
+    name="urn:mace:dir:attribute-def:group" />
+  &lt;resolver:AttributeEncoder xsi:type="enc:SAML2String"
+    name="urn:oid:0.9.2342.19200300.100.1.4" friendlyName="group" />
+  &lt;ad:Script>&lt;CDATA[ js-is-good-for-you! ]]>&lt;ad:Script>
+&lt;resolver:AttributeDefinition>
+            </pre>
+          </section>
+          <section>
+            <h2>Shibboleth Attribute Release</h2>
+            <pre class="stretch"><code>
+// js-is-good-for-you!
+importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
+importPackage(Packages.org.slf4j);
+logger = LoggerFactory.getLogger("edu.internet2.middleware.shibboleth.resolver.Script.scriptTest");
+ldgroup = new BasicAttribute("ldgroup");
+gbase =",ou=groupergroups,o=utulsa.edu";
+gre = new RegExp(".*"+gbase+"$");
+gre2 = new RegExp(".*,ou=information-services,ou=organization,ou=employee,ou=groupergroups,o=utulsa.edu$");
+
+if (typeof memberOf != "undefined" && memberOf != null ) {
+  for ( i = 0; memberOf != null && i &lt; memberOf.getValues().size(); i++ ) {
+    dn = memberOf.getValues().get(i);
+    if (gre.test(dn) && gre2.test(dn)) {
+      dn = dn.replace(gbase,"");
+      parts = dn.split(",");
+      for (j=0;j&lt;parts.length;j++) {
+        parts[j] = parts[j].split("=")[1];
+      }
+      path = parts.reverse().join(":");
+      ldgroup.getValues().add(path);
+    }
+  }
+}
+logger.info("LDGROUP: "+ldgroup.getValues());
+            </code></pre>
           </section>
         </section>
 
