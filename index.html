@@ -90,19 +90,15 @@
 // js-is-good-for-you!
 importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
 importPackage(Packages.org.slf4j);
-logger = LoggerFactory.getLogger("edu.internet2.middleware.shibboleth.resolver.Script.scriptTest");
+logger = LoggerFactory.getLogger("ldgroup lookup");
 ldgroup = new BasicAttribute("ldgroup");
-gbase =",ou=groupergroups,o=utulsa.edu";
-gre = new RegExp(".*"+gbase+"$");
-gre2 = new RegExp(".*,ou=information-services,ou=organization,ou=employee,ou=groupergroups,o=utulsa.edu$");
 
 if (typeof memberOf != "undefined" && memberOf != null ) {
   for ( i = 0; memberOf != null && i &lt; memberOf.getValues().size(); i++ ) {
     dn = memberOf.getValues().get(i);
-    if (gre.test(dn) && gre2.test(dn)) {
-      dn = dn.replace(gbase,"");
-      parts = dn.split(",");
-      for (j=0;j&lt;parts.length;j++) {
+    if ( dn.match(/,ou=groupergroups,o=utulsa.edu$/) ) {
+      parts = dn.split(",").slice(0,-2);
+      for ( j=0; j &lt; parts.length; j++ ) {
         parts[j] = parts[j].split("=")[1];
       }
       path = parts.reverse().join(":");
