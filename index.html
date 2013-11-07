@@ -40,8 +40,14 @@
           <h1>MemberOf</h1>
           <h3>From Box To ERP</h3>
         </section>
+
         <section>
-          <h2>Blank</h2>
+          <p>Box</p>
+          <p>Shibboleth</p>
+          <p>Directory</p>
+          <p>Grouper</p>
+          <p>Identity Vault</p>
+          <p>Erp</p>
         </section>
 
         <section>
@@ -112,51 +118,12 @@ logger.info("LDGROUP: "+ldgroup.getValues());
         </section>
 
         <section>
-          <h2>SingleSignOut</h2>
-        </section>
-
-        <section>
           <h2>Directory(ies)</h2>
-          <p>Run OpenLDAP and Ad in parrallel at TU.</p>
-          <p>Keep everyone in a flat ou=people.</p>
-          <p>Want both member and memberOf (overlay in OpenLdap, 'free' in AD).</p>
-        </section>
-
-        <section>
-          <section>
-            <h2>Directory Sync Webservice</h2>
-            <pre class="stretch">
-# grouper-loader.properties
-
-changeLog.consumer.httpTestGroup.class =
-  edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbConsumer
-changeLog.consumer.httpTestGroup.publisher.class =
-  edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbHttpPublisher
-changeLog.consumer.httpTestGroup.publisher.url = http://server:port/
-changeLog.consumer.httpTestGroup.quartzCron = 48 * * * * ?
-            </pre>
-          </section>
-          <section>
-            <h2>Directory Sync Webservice</h2>
-            <pre class="stretch"><code>
-class Helper
-  def maybe_create_group_then_add_ids(path,id)
-  def remove_members_where_appropriate(path, id)
-
-events.merge!({
-  "MEMBERSHIP_ADD" => {fields: {event: 'eventType', ...},
-                       method: "maybe_create_group_then_add_ids"},
-  "MEMBERSHIP_DELETE" => {fields: {...},
-                          method: "remove_members_where_appropriate"},
-})
-
-targets = [LDAPSink.new, LDAPSink.new(LDAPSink::Adopts)]
-
-post '/' do
-  targets.each do |t|
-    # Handle events
-            </code></pre>
-          </section>
+          <ul>
+            <li>Run OpenLDAP and Ad in parallel at TU.</li>
+            <li>Keep everyone in a flat ou=people.</li>
+            <li>Want both member and memberOf<br>(overlay in OpenLdap, 'free' in AD).</li>
+          </ul>
         </section>
 
         <section>
@@ -248,73 +215,6 @@ class GroupAdEntry < AdEntry
           </section>
         </section>
 
-        <section>
-          <section>
-            <h2>grouperlib.rb</h2>
-            <pre class="stretch"><code>
-class Grouper
-  def initialize(host,username,password)
-  def post(payload,dechaff,urh='/grouper-ws/servicesRest/v2.0.1/groups',*opts)
-  def get(command,dechaff)
-  def put(path,id)
-  def delete(path,id)
-class GrouperGroup
-  def self.grouper
-  def grouper
-  def initialize(path,uuid=nil,attributes={},types=[])
-  def members(opt={})
-  def add_members(ids)
-  def delete_members(ids)
-  def self.find id
-  def self.child_stems(stem)
-  def self.child_paths(stem)
-  def self.gsh_creator(path,where)
-
-            </code></pre>
-            <aside class="notes">
-            There's room for the initializer type stuff but does it add anything?
-            Brief explanation of dechaff? Probably not?
-            </aside>
-          </section>
-          <section>
-            <h2>grouperlib.rb</h2>
-            <pre class="stretch"><code>
-// GrouperGroup.find
-if Puuid.match(id)
-  request = {"groupUuid"=>id, "queryFilterType"=>"FIND_BY_GROUP_UUID"}
-else
-  request = {"groupName"=>id, "queryFilterType"=>"FIND_BY_GROUP_NAME_EXACT"}
-end
-payload = {'WsRestFindGroupsLiteRequest'=>
-              request.merge({"includeGroupDetail"=>"true"})}
-            </code></pre>
-          </section>
-          <section>
-            <h2>grouperlib.rb</h2>
-            <pre class="stretch"><code>
-if r = grouper.post(payload,['WsFindGroupsResults','groupResults'])
-  attrs = r['detail'].include?('attributeNames') ?
-    Hash[ r['detail']['attributeNames'].zip(r['detail']['attributeValues']) ] : {}
-  new r['name'], r['uuid'], attrs, r['detail']['typeNames']
-end
-
-// Break this up and show response JSON?
-
-// Grouper.post
-body = JSON.parse(http.request(req).body)
-result = dechaff.reduce( body ){|m,i| m[i]}
-if opts.include? :multi
-  result || []
-else
-  result ? result.first : nil
-end
-            </code></pre>
-           </section>
-           <section>
-            <h2>Using the grouper API docs</h2>
-            <p>Lite, REST, JSON, samples for basics, javadocs for Request objects to see parameters?</p>
-          </section>
-        </section>
 
         <section>
           <section>
@@ -373,59 +273,98 @@ where name = 'employment_status_code'
 
         <section>
           <section>
-            <h2>Subject View</h2>
+            <h2>grouperlib.rb</h2>
+            <ul>
+              <li>having good luck w/ Grouper API</li>
+              <li>JSON support is a nice touch</li>
+              <li><a href="https://spaces.internet2.edu/display/Grouper/Grouper+Web+Services">API Documentation</a></li>
+              <li><a href="http://anonsvn.internet2.edu/viewvc/viewvc.py/i2mi/trunk/grouper-ws/grouper-ws/doc/samples/groupSave/WsSampleGroupSaveRest_json.txt?revision=8390">sample</a> pages are very helpful</li>
+            </ul>
+          </section>
+          <section>
+            <h2>grouperlib.rb</h2>
             <pre class="stretch"><code>
-create view subject_viewnv as select
- b.did as id,
- (select a.value from namevalue as a where a.name='first' and a.did=b.did)
-  as first,
- (select a.value from namevalue as a where a.name='last' and a.did=b.did)
-  as last,
- (select a.value from namevalue as a where a.name='uid' and a.did=b.did)
-  as uid,
- (select a.value from namevalue as a where a.name='displayname' and a.did=b.did)
-  as displayname,
- (select lower(a.value) from namevalue as a where a.name='displayname' and a.did=b.did)
-  as lowername
-from
- (select distinct did from namevalue) as b ;
+// a work in progress !!
+def create_group(path)
+  name = path.split(':').last
+  req = Net::HTTP::Post.new "/grouper-ws/servicesRest/v2.0.1/groups"
+  req.body = { "WsRestGroupSaveRequest" => {
+    "wsGroupToSaves" => [ {
+      "wsGroup" => {
+        "name" => path,
+        "extension" => name,
+        "detail" => { "typeNames" => ["utulsaGroup"] },
+      },
+      "wsGroupLookup" => { "groupName" => path }
+    } ]
+  }}.to_json
+  req.add_field 'Content-type', 'text/x-json'
+  req.basic_auth @username, @password
+  r = JSON.parse(@http.request(req).body)['WsGroupSaveResults']
+  unless r['resultMetadata']['resultCode'] == 'SUCCESS'
+    raise "cannot create group:::#{r}"
+  end
+end
             </code></pre>
             <aside class="notes">
-              Better formatting. Maybe change line breaks? Couldn't come up with anything I liked.
-
-              Turn namevalue pairs in to something like a more typical table.
-              Key element is from clause. Everything builds from there.
-
-              can't remember what config'd how means?
             </aside>
           </section>
           <section>
-            <h2>Perhaps you can help</h2>
-            <p>We're not happy with subject search speed (2-3s)
-            <ul>
-              <li>We've tried different formulations</li>
-              <li>We've tried indexing</li>
-              <li>We've tried materializing the view</li>
-              <li>??</li>
-            </ul>
+            <h2>Grouperlib.rb</h2>
+            <p>To use event-driven change notification:</p>
+            <pre><small>
+# grouper-loader.properties
+changeLog.consumer.httpTestGroup.class = edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbConsumer
+changeLog.consumer.httpTestGroup.publisher.class = edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbHttpPublisher
+changeLog.consumer.httpTestGroup.publisher.url = http://server.utulsa.edu:4499/
+changeLog.consumer.httpTestGroup.quartzCron = 48 * * * * ?
+            </small></pre>
+            <p>Posts JSON to the listening server</p>
           </section>
-          </section>
-
-        <section>
-          <h2>Identity Vault</h2>
-          <ul>
-            <li>[tuid, name, value]</li>
-            <li>noise equals power</li>
-            <li>indexes, indexes, indexes</li>
-            <li>emulating document db</li>
-            <li>looking at single/multi schema</li>
-          </ul>
-          <aside class="notes">
-            Didn't we have some note for this?
-          </aside>
         </section>
 
+        <section>
+          <section>
+            <h2>Identity Vault</h2>
+            <ul>
+              <li>[tuid, name, value]</li>
+              <li>noise equals power</li>
+              <li>indexes, indexes, indexes</li>
+              <li>emulating document db</li>
+              <li>looking at single/multi schema</li>
+            </ul>
+            <aside class="notes">
+              Didn't we have some note for this?
+            </aside>
+          </section>
+          <section>
+            <h2>Grouper Subject View</h2>
+            <pre><code>
 
+create view subject as select b.tuid as id,
+ (select a.value from namevalue as a
+  where a.name='first' and a.tuid=b.tuid) as first,
+ (select a.value from namevalue as a
+  where a.name='last' and a.tuid=b.tuid) as last,
+ (select a.value from namevalue as a
+  where a.name='uid' and a.tuid=b.tuid) as uid,
+ (select a.value from namevalue as a
+  where a.name='displayname' and a.tuid=b.tuid) as displayname,
+ (select lower(a.value) from namevalue as a
+  where a.name='displayname' and a.tuid=b.tuid) as lowername
+from
+ (select distinct tuid from namevalue) as b ;
+
+            </code></pre>
+            <p>Lookup within Grouper is stubbornly slow. :(</p>
+            <aside class="notes">
+              Turn namevalue pairs in to something like a more typical table.
+              Key element is from clause. Everything builds from there.
+
+              We've tried: different formulations, indexing, materializing the view.
+            </aside>
+          </section>
+        </section>
 
         <section>
           <h1>Reveal.js</h1>
