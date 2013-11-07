@@ -123,8 +123,22 @@ logger.info("LDGROUP: "+ldgroup.getValues());
         </section>
 
         <section>
-          <h2>Directory Sync Webservice</h2>
-          <pre class="stretch"><code>
+          <section>
+            <h2>Directory Sync Webservice</h2>
+            <pre class="stretch">
+# grouper-loader.properties
+
+changeLog.consumer.httpTestGroup.class =
+  edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbConsumer
+changeLog.consumer.httpTestGroup.publisher.class =
+  edu.internet2.middleware.grouper.changeLog.esb.consumer.EsbHttpPublisher
+changeLog.consumer.httpTestGroup.publisher.url = http://server:port/
+changeLog.consumer.httpTestGroup.quartzCron = 48 * * * * ?
+            </pre>
+          </section>
+          <section>
+            <h2>Directory Sync Webservice</h2>
+            <pre class="stretch"><code>
 class Helper
   def maybe_create_group_then_add_ids(path,id)
   def remove_members_where_appropriate(path, id)
@@ -141,7 +155,8 @@ targets = [LDAPSink.new, LDAPSink.new(LDAPSink::Adopts)]
 post '/' do
   targets.each do |t|
     # Handle events
-          </code></pre>
+            </code></pre>
+          </section>
         </section>
 
         <section>
