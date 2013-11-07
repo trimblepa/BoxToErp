@@ -123,6 +123,28 @@ logger.info("LDGROUP: "+ldgroup.getValues());
         </section>
 
         <section>
+          <h2>Directory Sync Webservice</h2>
+          <pre class="stretch"><code>
+class Helper
+  def maybe_create_group_then_add_ids(path,id)
+  def remove_members_where_appropriate(path, id)
+
+events.merge!({
+  "MEMBERSHIP_ADD" => {fields: {event: 'eventType', ...},
+                       method: "maybe_create_group_then_add_ids"},
+  "MEMBERSHIP_DELETE" => {fields: {...},
+                          method: "remove_members_where_appropriate"},
+})
+
+targets = [LDAPSink.new, LDAPSink.new(LDAPSink::Adopts)]
+
+post '/' do
+  targets.each do |t|
+    # Handle events
+          </code></pre>
+        </section>
+
+        <section>
           <section>
             <h2>EntryLib.rb</h2>
             <table style="margin-left: auto; margin-right:auto;">
@@ -240,20 +262,42 @@ class GrouperGroup
             </aside>
           </section>
           <section>
-            <h2>API Round-trip</h2>
-            <ul>
-            <li>Build RESTful URL (groups/#{path}/members/#{id})</li>
-            <li>Build the payload if appropriate (POSTs like FindGroups/Stems, etc)
-            <li>Execute the query (http PUT)</li>
-            <li>Parse the JSON and extract interesting fields</li>
-            </ul>
-            <aside class="notes">
-              Better to do a specific example rather than a general explanation?
-            </aside>
+            <h2>grouperlib.rb</h2>
+            <pre class="stretch"><code>
+// GrouperGroup.find
+if Puuid.match(id)
+  request = {"groupUuid"=>id, "queryFilterType"=>"FIND_BY_GROUP_UUID"}
+else
+  request = {"groupName"=>id, "queryFilterType"=>"FIND_BY_GROUP_NAME_EXACT"}
+end
+payload = {'WsRestFindGroupsLiteRequest'=>
+              request.merge({"includeGroupDetail"=>"true"})}
+            </code></pre>
           </section>
           <section>
+            <h2>grouperlib.rb</h2>
+            <pre class="stretch"><code>
+if r = grouper.post(payload,['WsFindGroupsResults','groupResults'])
+  attrs = r['detail'].include?('attributeNames') ?
+    Hash[ r['detail']['attributeNames'].zip(r['detail']['attributeValues']) ] : {}
+  new r['name'], r['uuid'], attrs, r['detail']['typeNames']
+end
+
+// Break this up and show response JSON?
+
+// Grouper.post
+body = JSON.parse(http.request(req).body)
+result = dechaff.reduce( body ){|m,i| m[i]}
+if opts.include? :multi
+  result || []
+else
+  result ? result.first : nil
+end
+            </code></pre>
+           </section>
+           <section>
             <h2>Using the grouper API docs</h2>
-            <p>Need to figure out the key tips here.</p>
+            <p>Lite, REST, JSON, samples for basics, javadocs for Request objects to see parameters?</p>
           </section>
         </section>
 
