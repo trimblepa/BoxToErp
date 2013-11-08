@@ -39,7 +39,7 @@
         <section>
           <h1>MemberOf</h1>
           <h3>From Box To ERP</h3>
-          <p>Jared Housh and Clark Trimble</p>
+          <p style="margin-top:60px;">Jared Housh and Clark Trimble</p>
           <p>The University of Tulsa</p>
         </section>
 
@@ -77,12 +77,14 @@
 
         <section>
           <section>
-            <h2>Federated Identity</h2>
-            <p>Authentication: the usual Shibb metadata exchange</p>
-            <p>Authorization: assign privileges to groups, please</p>
+            <h2>Shibboleth</h2>
+            <ul>
+              <li>authentication: the usual Shibb metadata exchange</li>
+              <li>authorization: assign privileges to groups, please</li>
+            </ul>
           </section>
           <section>
-            <h2>Shibboleth Attribute Release</h2>
+            <h2>Attribute Release</h2>
             <pre>
 //attribute-filter.xml
 &lt;afp:AttributeFilterPolicy id="box">
@@ -105,12 +107,12 @@
             </pre>
           </section>
           <section>
-            <h2>Shibboleth Attribute Release</h2>
+            <h2>Attribute Release</h2>
             <pre class="stretch"><code>
 // js-is-good-for-you!
 importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
 importPackage(Packages.org.slf4j);
-logger = LoggerFactory.getLogger("ldgroup lookup");
+logger = LoggerFactory.getLogger("edu.internet2.middleware.shibboleth.resolver.Script.scriptTest");
 ldgroup = new BasicAttribute("ldgroup");
 
 if (typeof memberOf != "undefined" && memberOf != null ) {
